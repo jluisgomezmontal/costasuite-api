@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(agent)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  properties Property[]
+
+  @@map("users")
+}
+
+model Property {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  type        PropertyType
+  status      PropertyStatus @default(available)
+  price       Float
+  location    Location
+  features    Features
+  images      String[]
+  amenities   String[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  ownerId String @db.ObjectId
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([type])
+  @@index([status])
+  @@map("properties")
+}
+
+enum Role {
+  admin
+  agent
+}
+
+enum PropertyType {
+  sale
+  rent
+}
+
+enum PropertyStatus {
+  available
+  sold
+  rented
+}
+
+type Location {
+  address     String
+  city        String
+  state       String
+  country     String
+  postalCode  String
+  coordinates Coordinates
+}
+
+type Coordinates {
+  lat Float
+  lng Float
+}
+
+type Features {
+  bedrooms   Int
+  bathrooms  Int
+  area       Float
+  parkingSpots Int?
+  yearBuilt  Int?
+}
