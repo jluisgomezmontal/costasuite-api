@@ -1,0 +1,14 @@
+services:
+  # Type of service
+  - type: web
+    # Name of your service
+    name: costasuite-api
+    # Environment variables
+    env: node
+    # Build and start commands
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
+    # Directory where your code lives
+    rootDir: .
+    # Health check path
+    healthCheckPath: /health
